@@ -46,8 +46,31 @@ public class database extends SQLiteOpenHelper {
 
     public ArrayList<dbPojo> getData(){
         ArrayList<dbPojo> arrayList = new ArrayList<>();
-        dbPojo pojo=new dbPojo();
+        dbPojo pojo;
         SQLiteDatabase db=this.getWritableDatabase();
+        Cursor cursor=db.rawQuery("SELECT * FROM SALES;",null);
+        if(cursor.moveToFirst()){
+            do{
+                pojo=new dbPojo();
+                pojo.setId(cursor.getInt(0));
+                pojo.setDate(cursor.getString(1));
+                pojo.setItemName(cursor.getString(2));
+                pojo.setPrice(cursor.getInt(3));
+                arrayList.add(pojo);
+            }while(cursor.moveToNext());
+        }
+        return arrayList;
+    }
+
+    public ArrayList<String> getItems(){
+        ArrayList<String> arrayList=new ArrayList<>();
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor cursor=db.rawQuery("SELECT * FROM ITEMS;",null);
+        if(cursor.moveToFirst()){
+            do{
+                arrayList.add(cursor.getString(0));
+            }while(cursor.moveToNext());
+        }
         return arrayList;
     }
 }

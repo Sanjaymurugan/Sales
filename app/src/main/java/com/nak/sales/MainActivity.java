@@ -7,11 +7,14 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -26,9 +29,11 @@ public class MainActivity extends AppCompatActivity {
     TextInputEditText itemPrice;
     AutoCompleteTextView itemName;
     Button add;
+    ListView homeList;
     database db;
     Date currentDate;
     SimpleDateFormat sdf;
+    homeListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +45,17 @@ public class MainActivity extends AppCompatActivity {
         itemName=(AutoCompleteTextView)findViewById(R.id.itemName);
         itemPrice=(TextInputEditText)findViewById(R.id.price);
         add=(Button)findViewById(R.id.add);
+        homeList=(ListView)findViewById(R.id.salesList);
+
         db=new database(MainActivity.this);
         currentDate=new Date();
         sdf=new SimpleDateFormat("dd-MM-yyyy");
+        adapter=new homeListAdapter(MainActivity.this,db.getData());
+        homeList.setAdapter(adapter);
+
+        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems());
+        itemName.setThreshold(1);
+        itemName.setAdapter(arrayAdapter);
 
         String today=sdf.format(currentDate);
         date.setText(today);
@@ -67,8 +80,14 @@ public class MainActivity extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!TextUtils.isEmpty(itemName.getText())&&!TextUtils.isEmpty(itemPrice.getText()))
-                    db.insertData(date.getText().toString(),itemName.getText().toString(),Integer.parseInt(itemPrice.getText().toString()));
+                if(!TextUtils.isEmpty(itemName.getText())&&!TextUtils.isEmpty(itemPrice.getText())) {
+                    db.insertData(date.getText().toString(), itemName.getText().toString(), Integer.parseInt(itemPrice.getText().toString()));
+                    itemName.setText("");
+                    itemPrice.setText("");
+                    Toast.makeText(MainActivity.this,"Successfully added",Toast.LENGTH_SHORT).show();
+                    adapter=new homeListAdapter(MainActivity.this,db.getData());
+                    homeList.setAdapter(adapter);
+                }
                 else if(TextUtils.isEmpty(itemName.getText()))
                     itemName.setError("Please Enter the Item name");
                 else if(TextUtils.isEmpty(itemPrice.getText()))
