@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -40,10 +41,12 @@ public class homeListAdapter extends BaseAdapter {
         TextView date=(TextView)view.findViewById(R.id.date);
         TextView itemName=(TextView)view.findViewById(R.id.itemName);
         TextView price=(TextView)view.findViewById(R.id.price);
+
         dbPojo pojo=arrayList.get(i);
         date.setText(pojo.getDate());
         itemName.setText(pojo.getItemName());
         price.setText(pojo.getPrice()+"");
+
         return view;
     }
 }

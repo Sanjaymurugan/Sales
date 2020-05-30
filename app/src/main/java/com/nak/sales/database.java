@@ -44,6 +44,17 @@ public class database extends SQLiteOpenHelper {
         }
     }
 
+    public void update(int id, String date, String itemName, int price){
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues contentValues=new ContentValues();
+        contentValues.put("SALESDATE",date);
+        contentValues.put("ITEM",itemName);
+        contentValues.put("PRICE",price);
+        String whereClause="SALESID=?";
+        String whereArgs[]={id+""};
+        db.update("SALES",contentValues,whereClause,whereArgs);
+    }
+
     public ArrayList<dbPojo> getData(){
         ArrayList<dbPojo> arrayList = new ArrayList<>();
         dbPojo pojo;
