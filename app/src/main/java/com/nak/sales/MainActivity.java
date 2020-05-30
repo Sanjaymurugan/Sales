@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     Date currentDate;
     SimpleDateFormat sdf;
     homeListAdapter adapter;
+    ArrayList<dbPojo> arrayList;
+    public static int id=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +56,13 @@ public class MainActivity extends AppCompatActivity {
         sdf=new SimpleDateFormat("dd-MM-yyyy");
         adapter=new homeListAdapter(MainActivity.this,db.getData());
         homeList.setAdapter(adapter);
+        arrayList=db.getData();
 
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems());
+        final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems());
         itemName.setThreshold(1);
         itemName.setAdapter(arrayAdapter);
 
-        String today=sdf.format(currentDate);
+        final String today=sdf.format(currentDate);
         date.setText(today);
 
         cv.setOnClickListener(new View.OnClickListener() {
@@ -81,17 +86,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!TextUtils.isEmpty(itemName.getText())&&!TextUtils.isEmpty(itemPrice.getText())) {
-                    db.insertData(date.getText().toString(), itemName.getText().toString(), Integer.parseInt(itemPrice.getText().toString()));
+                    if(add.getText().equals("Edit"))
+                        db.update(id,date.getText().toString(),itemName.getText().toString(),Integer.parseInt(itemPrice.getText().toString()));
+                    else
+                        db.insertData(date.getText().toString(), itemName.getText().toString(), Integer.parseInt(itemPrice.getText().toString()));
                     itemName.setText("");
                     itemPrice.setText("");
-                    Toast.makeText(MainActivity.this,"Successfully added",Toast.LENGTH_SHORT).show();
-                    adapter=new homeListAdapter(MainActivity.this,db.getData());
+                    date.setText(today);
+                    Toast.makeText(MainActivity.this, "Successfully added", Toast.LENGTH_SHORT).show();
+                    adapter = new homeListAdapter(MainActivity.this, db.getData());
                     homeList.setAdapter(adapter);
                 }
                 else if(TextUtils.isEmpty(itemName.getText()))
                     itemName.setError("Please Enter the Item name");
                 else if(TextUtils.isEmpty(itemPrice.getText()))
                     itemPrice.setError("Please Enter the Price");
+            }
+        });
+
+        homeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                dbPojo pojo=arrayList.get(i);
+                id=pojo.getId();
+                itemName.setText(pojo.getItemName());
+                itemPrice.setText(pojo.getPrice()+"");
+                date.setText(pojo.getDate());
+                add.setText("Edit");
             }
         });
     }
