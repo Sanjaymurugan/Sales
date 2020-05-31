@@ -76,6 +76,18 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
+        android:id="@+id/filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Sales"
+        android:textSize="16dp"
+        android:textColor="@color/white"
+        android:background="@color/colorPrimary"
+        android:layout_below="@+id/itemNameTil"
+        android:layout_margin="10dp"
+        android:padding="10dp"/>
+
+    <Button
         android:id="@+id/add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

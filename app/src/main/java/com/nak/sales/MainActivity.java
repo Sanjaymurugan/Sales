@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     DatePickerDialog pickerDialog;
     TextInputEditText itemPrice;
     AutoCompleteTextView itemName;
-    Button add;
+    Button add,filter;
     ListView homeList;
     database db;
     Date currentDate;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         itemName=(AutoCompleteTextView)findViewById(R.id.itemName);
         itemPrice=(TextInputEditText)findViewById(R.id.price);
         add=(Button)findViewById(R.id.add);
+        filter=(Button)findViewById(R.id.filter);
         homeList=(ListView)findViewById(R.id.salesList);
 
         db=new database(MainActivity.this);
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
                         date.setText(i2+"-"+i1+"-"+i);
                     }
-                },day,month,year);
+                },day,month+1,year);
                 pickerDialog.show();
             }
         });
@@ -96,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Successfully added", Toast.LENGTH_SHORT).show();
                     adapter = new homeListAdapter(MainActivity.this, db.getData());
                     homeList.setAdapter(adapter);
+                    add.setText("Add");
                 }
                 else if(TextUtils.isEmpty(itemName.getText()))
                     itemName.setError("Please Enter the Item name");
@@ -107,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         homeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                arrayList=db.getData();
                 dbPojo pojo=arrayList.get(i);
                 id=pojo.getId();
                 itemName.setText(pojo.getItemName());

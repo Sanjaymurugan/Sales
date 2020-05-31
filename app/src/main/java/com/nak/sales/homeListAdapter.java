@@ -45,7 +45,7 @@ public class homeListAdapter extends BaseAdapter {
         dbPojo pojo=arrayList.get(i);
         date.setText(pojo.getDate());
         itemName.setText(pojo.getItemName());
-        price.setText(pojo.getPrice()+"");
+        price.setText("₹"+pojo.getPrice());
 
         return view;
     }
