@@ -5,13 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 
 public class database extends SQLiteOpenHelper {
+    Context context;
     public database(Context context) {
         super(context, "sales", null, 1);
+        this.context=context;
     }
 
     @Override
@@ -83,5 +86,23 @@ public class database extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
         }
         return arrayList;
+    }
+
+    public ArrayList<dbPojo> filterResult(String from, String to){
+        ArrayList<dbPojo> arrayList=new ArrayList<>();
+        SQLiteDatabase db=this.getReadableDatabase();
+//        Cursor cursor=db.rawQuery("SELECT ITEM, SUM(PRICE) FROM SALES WHERE SALESDATE BETWEEN '"+from+"' AND '"+to+"';",null);
+        Cursor cursor=db.rawQuery("SELECT SUM(PRICE) FROM SALES WHERE SALESDATE BETWEEN '"+from+"' AND '"+to+"';",null);
+        if(cursor.moveToFirst()){
+            do{
+                dbPojo pojo=new dbPojo();
+//                pojo.setItemName(cursor.getString(0));
+                pojo.setItemName("null");
+                pojo.setPrice(cursor.getInt(0));
+                arrayList.add(pojo);
+                Toast.makeText(context,cursor.getString(0)+"---->",Toast.LENGTH_LONG).show();
+            }while(cursor.moveToNext());
+        }
+        return  arrayList;
     }
 }

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 pickerDialog=new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                        date.setText(i2+"-"+i1+"-"+i);
+                        date.setText(i2+"-"+(i1+1)+"-"+i);
                     }
                 },day,month+1,year);
                 pickerDialog.show();
@@ -117,6 +118,13 @@ public class MainActivity extends AppCompatActivity {
                 itemPrice.setText(pojo.getPrice()+"");
                 date.setText(pojo.getDate());
                 add.setText("Edit");
+            }
+        });
+
+        filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,Filter.class));
             }
         });
     }
