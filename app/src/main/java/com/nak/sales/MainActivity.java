@@ -55,18 +55,14 @@ public class MainActivity extends AppCompatActivity {
         homeList=(ListView)findViewById(R.id.salesList);
 
         db=new database(MainActivity.this);
-        currentDate=new Date();
-        sdf=new SimpleDateFormat("dd-MM-yyyy");
         adapter=new homeListAdapter(MainActivity.this,db.getData());
         homeList.setAdapter(adapter);
         arrayList=db.getData();
+        setDate();
 
         final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems());
         itemName.setThreshold(1);
         itemName.setAdapter(arrayAdapter);
-
-        final String today=sdf.format(currentDate);
-        date.setText(today);
 
         cv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,11 +91,12 @@ public class MainActivity extends AppCompatActivity {
                         db.insertData(date.getText().toString(), itemName.getText().toString(), Integer.parseInt(itemPrice.getText().toString()));
                     itemName.setText("");
                     itemPrice.setText("");
-                    date.setText(today);
+                    setDate();
                     Toast.makeText(MainActivity.this, "Successfully added", Toast.LENGTH_SHORT).show();
                     adapter = new homeListAdapter(MainActivity.this, db.getData());
                     homeList.setAdapter(adapter);
                     add.setText("Add");
+                    filter.setText("View Sales");
                 }
                 else if(TextUtils.isEmpty(itemName.getText()))
                     itemName.setError("Please Enter the Item name");
@@ -118,14 +115,35 @@ public class MainActivity extends AppCompatActivity {
                 itemPrice.setText(pojo.getPrice()+"");
                 date.setText(pojo.getDate());
                 add.setText("Edit");
+                filter.setText("Delete");
             }
         });
 
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,Filter.class));
+                if(filter.getText().equals("View Sales"))
+                    startActivity(new Intent(MainActivity.this,Filter.class));
+                else{
+                    db.delete(id);
+                    itemName.setText("");
+                    itemPrice.setText("");
+                    setDate();
+                    Toast.makeText(MainActivity.this, "Successfully deleted", Toast.LENGTH_SHORT).show();
+                    adapter = new homeListAdapter(MainActivity.this, db.getData());
+                    homeList.setAdapter(adapter);
+                    add.setText("Add");
+                    filter.setText("View Sales");
+                }
             }
         });
+    }
+
+    public void setDate(){
+        Calendar cal=Calendar.getInstance();
+        int day=cal.get(Calendar.DAY_OF_MONTH);
+        int month=cal.get(Calendar.MONTH);
+        int year=cal.get(Calendar.YEAR);
+        date.setText(day+"-"+(month+1)+"-"+year);
     }
 }

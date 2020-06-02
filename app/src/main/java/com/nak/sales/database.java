@@ -32,8 +32,9 @@ public class database extends SQLiteOpenHelper {
     public void insertData(String date,String itemName,int price){
         SQLiteDatabase db=this.getWritableDatabase();
         int unique=1;
+        String convertedDate=convertDateFormat(date);
         ContentValues contentValues=new ContentValues();
-        contentValues.put("SALESDATE",date);
+        contentValues.put("SALESDATE",convertedDate);
         contentValues.put("ITEM",itemName);
         contentValues.put("PRICE",price);
         db.insert("SALES",null,contentValues);
@@ -49,8 +50,9 @@ public class database extends SQLiteOpenHelper {
 
     public void update(int id, String date, String itemName, int price){
         SQLiteDatabase db=this.getWritableDatabase();
+        String convertedDate=convertDateFormat(date);
         ContentValues contentValues=new ContentValues();
-        contentValues.put("SALESDATE",date);
+        contentValues.put("SALESDATE",convertedDate);
         contentValues.put("ITEM",itemName);
         contentValues.put("PRICE",price);
         String whereClause="SALESID=?";
@@ -67,7 +69,8 @@ public class database extends SQLiteOpenHelper {
             do{
                 pojo=new dbPojo();
                 pojo.setId(cursor.getInt(0));
-                pojo.setDate(cursor.getString(1));
+                String convertedDate=convertDateFormat(cursor.getString(1));
+                pojo.setDate(convertedDate);
                 pojo.setItemName(cursor.getString(2));
                 pojo.setPrice(cursor.getInt(3));
                 arrayList.add(pojo);
@@ -91,18 +94,28 @@ public class database extends SQLiteOpenHelper {
     public ArrayList<dbPojo> filterResult(String from, String to){
         ArrayList<dbPojo> arrayList=new ArrayList<>();
         SQLiteDatabase db=this.getReadableDatabase();
-//        Cursor cursor=db.rawQuery("SELECT ITEM, SUM(PRICE) FROM SALES WHERE SALESDATE BETWEEN '"+from+"' AND '"+to+"';",null);
-        Cursor cursor=db.rawQuery("SELECT SUM(PRICE) FROM SALES WHERE SALESDATE BETWEEN '"+from+"' AND '"+to+"';",null);
+        String convertedFrom=convertDateFormat(from);
+        String convertedTo=convertDateFormat(to);
+        Cursor cursor=db.rawQuery("SELECT ITEM, SUM(PRICE) FROM SALES WHERE SALESDATE BETWEEN '"+convertedFrom+"' AND '"+convertedTo+"' GROUP BY ITEM;",null);
         if(cursor.moveToFirst()){
             do{
                 dbPojo pojo=new dbPojo();
-//                pojo.setItemName(cursor.getString(0));
-                pojo.setItemName("null");
-                pojo.setPrice(cursor.getInt(0));
+                pojo.setItemName(cursor.getString(0));
+                pojo.setPrice(cursor.getInt(1));
                 arrayList.add(pojo);
-                Toast.makeText(context,cursor.getString(0)+"---->",Toast.LENGTH_LONG).show();
             }while(cursor.moveToNext());
         }
         return  arrayList;
+    }
+
+    public String convertDateFormat(String date){
+        String arr[]=date.split("-");
+        String finalDate=arr[2]+"-"+arr[1]+"-"+arr[0];
+        return finalDate;
+    }
+
+    public void delete(int id){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.execSQL("DELETE FROM SALES WHERE SALESID="+id+";");
     }
 }
