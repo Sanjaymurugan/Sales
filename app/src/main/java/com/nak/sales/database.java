@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class database extends SQLiteOpenHelper {
@@ -63,8 +64,14 @@ public class database extends SQLiteOpenHelper {
     public ArrayList<dbPojo> getData(){
         ArrayList<dbPojo> arrayList = new ArrayList<>();
         dbPojo pojo;
+        Calendar calendar=Calendar.getInstance();
+        int day=calendar.get(Calendar.DAY_OF_MONTH);
+        int month=calendar.get(Calendar.MONTH);
+        int year=calendar.get(Calendar.YEAR);
+        String curr_date=year+"-"+(month+1)+"-"+day;
+        String from_date=year+"-"+(month-1)+"-"+day;
         SQLiteDatabase db=this.getWritableDatabase();
-        Cursor cursor=db.rawQuery("SELECT * FROM SALES;",null);
+        Cursor cursor=db.rawQuery("SELECT * FROM SALES WHERE SALESDATE BETWEEN '"+from_date+"' AND '"+curr_date+"';",null);
         if(cursor.moveToFirst()){
             do{
                 pojo=new dbPojo();
