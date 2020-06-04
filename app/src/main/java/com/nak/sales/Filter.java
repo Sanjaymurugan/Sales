@@ -15,7 +15,7 @@ import java.util.Calendar;
 public class Filter extends AppCompatActivity {
     CardView fromCV, toCV;
     DatePickerDialog pickerDialog;
-    TextView from,to;
+    TextView from,to,grandTotal;
     ListView filterList;
     database db;
 
@@ -28,6 +28,7 @@ public class Filter extends AppCompatActivity {
         toCV=(CardView)findViewById(R.id.toCV);
         from=(TextView)findViewById(R.id.from);
         to=(TextView)findViewById(R.id.to);
+        grandTotal=(TextView)findViewById(R.id.total);
         filterList=(ListView)findViewById(R.id.filterList);
         db=new database(Filter.this);
 
@@ -85,5 +86,6 @@ public class Filter extends AppCompatActivity {
     public void trigger(){
         homeListAdapter adapter=new homeListAdapter(Filter.this,db.filterResult(from.getText().toString(),to.getText().toString()));
         filterList.setAdapter(adapter);
+        grandTotal.setText("₹"+db.getGrandTotal(from.getText().toString(),to.getText().toString()));
     }
 }

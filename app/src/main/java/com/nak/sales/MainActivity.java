@@ -32,11 +32,9 @@ public class MainActivity extends AppCompatActivity {
     DatePickerDialog pickerDialog;
     TextInputEditText itemPrice;
     AutoCompleteTextView itemName;
-    Button add,filter;
+    Button add,filter,cancel;
     ListView homeList;
     database db;
-    Date currentDate;
-    SimpleDateFormat sdf;
     homeListAdapter adapter;
     ArrayList<dbPojo> arrayList;
     public static int id=0;
@@ -52,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         itemPrice=(TextInputEditText)findViewById(R.id.price);
         add=(Button)findViewById(R.id.add);
         filter=(Button)findViewById(R.id.filter);
+        cancel=(Button)findViewById(R.id.cancel);
+        cancel.setVisibility(View.GONE);
         homeList=(ListView)findViewById(R.id.salesList);
 
         db=new database(MainActivity.this);
@@ -91,12 +91,8 @@ public class MainActivity extends AppCompatActivity {
                         db.insertData(date.getText().toString(), itemName.getText().toString(), Integer.parseInt(itemPrice.getText().toString()));
                     itemName.setText("");
                     itemPrice.setText("");
-                    setDate();
-                    Toast.makeText(MainActivity.this, "Successfully added", Toast.LENGTH_SHORT).show();
-                    adapter = new homeListAdapter(MainActivity.this, db.getData());
-                    homeList.setAdapter(adapter);
-                    add.setText("Add");
-                    filter.setText("View Sales");
+                    trigger();
+                    cancel.setVisibility(View.GONE);
                 }
                 else if(TextUtils.isEmpty(itemName.getText()))
                     itemName.setError("Please Enter the Item name");
@@ -116,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 date.setText(pojo.getDate());
                 add.setText("Edit");
                 filter.setText("Delete");
+                cancel.setVisibility(View.VISIBLE);
             }
         });
 
@@ -134,7 +131,20 @@ public class MainActivity extends AppCompatActivity {
                     homeList.setAdapter(adapter);
                     add.setText("Add");
                     filter.setText("View Sales");
+                    cancel.setVisibility(View.GONE);
                 }
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setDate();
+                add.setText("Add");
+                filter.setText("View Sales");
+                itemName.setText("");
+                itemPrice.setText("");
+                cancel.setVisibility(View.GONE);
             }
         });
     }
@@ -145,5 +155,17 @@ public class MainActivity extends AppCompatActivity {
         int month=cal.get(Calendar.MONTH);
         int year=cal.get(Calendar.YEAR);
         date.setText(day+"-"+(month+1)+"-"+year);
+    }
+
+    public void trigger(){
+        setDate();
+        Toast.makeText(MainActivity.this, "Successfully added", Toast.LENGTH_SHORT).show();
+        adapter = new homeListAdapter(MainActivity.this, db.getData());
+        homeList.setAdapter(adapter);
+        add.setText("Add");
+        filter.setText("View Sales");
+        final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems());
+        itemName.setThreshold(1);
+        itemName.setAdapter(arrayAdapter);
     }
 }

@@ -64,12 +64,19 @@ public class database extends SQLiteOpenHelper {
     public ArrayList<dbPojo> getData(){
         ArrayList<dbPojo> arrayList = new ArrayList<>();
         dbPojo pojo;
+
         Calendar calendar=Calendar.getInstance();
         int day=calendar.get(Calendar.DAY_OF_MONTH);
         int month=calendar.get(Calendar.MONTH);
         int year=calendar.get(Calendar.YEAR);
         String curr_date=year+"-"+(month+1)+"-"+day;
-        String from_date=year+"-"+(month-1)+"-"+day;
+
+        calendar.add(Calendar.MONTH,-1);
+        day=calendar.get(Calendar.DAY_OF_MONTH);
+        month=calendar.get(Calendar.MONTH);
+        year=calendar.get(Calendar.YEAR);
+        String from_date=year+"-"+(month+1)+"-"+day;
+
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor cursor=db.rawQuery("SELECT * FROM SALES WHERE SALESDATE BETWEEN '"+from_date+"' AND '"+curr_date+"';",null);
         if(cursor.moveToFirst()){
@@ -124,5 +131,17 @@ public class database extends SQLiteOpenHelper {
     public void delete(int id){
         SQLiteDatabase db=this.getWritableDatabase();
         db.execSQL("DELETE FROM SALES WHERE SALESID="+id+";");
+    }
+
+    public int getGrandTotal(String from , String to){
+        int total=0;
+        SQLiteDatabase db=this.getWritableDatabase();
+        String convertedFrom=convertDateFormat(from);
+        String convertedTo=convertDateFormat(to);
+        Cursor cursor=db.rawQuery("SELECT SUM(PRICE) FROM SALES WHERE SALESDATE BETWEEN '"+convertedFrom+"' AND '"+convertedTo+"';", null);
+        if(cursor.moveToFirst()){
+            total=cursor.getInt(0);
+        }
+        return total;
     }
 }
