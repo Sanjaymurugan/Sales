@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,9 +35,11 @@ public class MainActivity extends AppCompatActivity {
     AutoCompleteTextView itemName;
     Button add,filter,cancel;
     ListView homeList;
+    Spinner tableSpinner;
     database db;
     homeListAdapter adapter;
     ArrayList<dbPojo> arrayList;
+    ArrayList<String> tableList;
     public static int id=0;
 
     @Override
@@ -50,14 +53,33 @@ public class MainActivity extends AppCompatActivity {
         itemPrice=(TextInputEditText)findViewById(R.id.price);
         add=(Button)findViewById(R.id.add);
         filter=(Button)findViewById(R.id.filter);
+        tableSpinner=(Spinner)findViewById(R.id.tableSpinner);
         cancel=(Button)findViewById(R.id.cancel);
         cancel.setVisibility(View.GONE);
         homeList=(ListView)findViewById(R.id.salesList);
+        tableList=new ArrayList<>();
+
+        tableList.add("Sales");
+        tableList.add("Purchase");
+        ArrayAdapter<String> tableSpinnerAdapter=new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,tableList);
+        tableSpinner.setAdapter(tableSpinnerAdapter);
+        tableSpinner.setSelection(0);
+        tableSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                trigger();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         db=new database(MainActivity.this);
-        adapter=new homeListAdapter(MainActivity.this,db.getData());
+        adapter=new homeListAdapter(MainActivity.this,db.getData(tableSpinner.getSelectedItem().toString()));
         homeList.setAdapter(adapter);
-        arrayList=db.getData();
+        arrayList=db.getData(tableSpinner.getSelectedItem().toString());
         setDate();
 
         final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems());
@@ -86,13 +108,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(!TextUtils.isEmpty(itemName.getText())&&!TextUtils.isEmpty(itemPrice.getText())) {
                     if(add.getText().equals("Edit"))
-                        db.update(id,date.getText().toString(),itemName.getText().toString(),Integer.parseInt(itemPrice.getText().toString()));
+                        db.update(tableSpinner.getSelectedItem().toString(),id,date.getText().toString(),itemName.getText().toString(),Integer.parseInt(itemPrice.getText().toString()));
                     else
-                        db.insertData(date.getText().toString(), itemName.getText().toString(), Integer.parseInt(itemPrice.getText().toString()));
+                        db.insertData(tableSpinner.getSelectedItem().toString(),date.getText().toString(), itemName.getText().toString(), Integer.parseInt(itemPrice.getText().toString()));
                     itemName.setText("");
                     itemPrice.setText("");
                     trigger();
-                    cancel.setVisibility(View.GONE);
                 }
                 else if(TextUtils.isEmpty(itemName.getText()))
                     itemName.setError("Please Enter the Item name");
@@ -104,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         homeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                arrayList=db.getData();
+                arrayList=db.getData(tableSpinner.getSelectedItem().toString());
                 dbPojo pojo=arrayList.get(i);
                 id=pojo.getId();
                 itemName.setText(pojo.getItemName());
@@ -119,15 +140,18 @@ public class MainActivity extends AppCompatActivity {
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(filter.getText().equals("View Sales"))
-                    startActivity(new Intent(MainActivity.this,Filter.class));
+                if(filter.getText().equals("View Sales")){
+                    Intent intent=new Intent(MainActivity.this,Filter.class);
+                    intent.putExtra("tableName",tableSpinner.getSelectedItem().toString());
+                    startActivity(intent);
+                }
                 else{
-                    db.delete(id);
+                    db.delete(tableSpinner.getSelectedItem().toString(),id);
                     itemName.setText("");
                     itemPrice.setText("");
                     setDate();
                     Toast.makeText(MainActivity.this, "Successfully deleted", Toast.LENGTH_SHORT).show();
-                    adapter = new homeListAdapter(MainActivity.this, db.getData());
+                    adapter = new homeListAdapter(MainActivity.this, db.getData(tableSpinner.getSelectedItem().toString()));
                     homeList.setAdapter(adapter);
                     add.setText("Add");
                     filter.setText("View Sales");
@@ -160,8 +184,9 @@ public class MainActivity extends AppCompatActivity {
     public void trigger(){
         setDate();
         Toast.makeText(MainActivity.this, "Successfully added", Toast.LENGTH_SHORT).show();
-        adapter = new homeListAdapter(MainActivity.this, db.getData());
+        adapter = new homeListAdapter(MainActivity.this, db.getData(tableSpinner.getSelectedItem().toString()));
         homeList.setAdapter(adapter);
+        cancel.setVisibility(View.GONE);
         add.setText("Add");
         filter.setText("View Sales");
         final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems());

@@ -22,15 +22,17 @@ public class database extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS ITEMS (ITEM TEXT UNIQUE NOT NULL);");
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS SALES (SALESID INTEGER PRIMARY KEY AUTOINCREMENT,SALESDATE DATE NOT NULL, ITEM TEXT NOT NULL, PRICE INT NOT NULL);");
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS PURCHASE (SALESID INTEGER PRIMARY KEY AUTOINCREMENT,SALESDATE DATE NOT NULL, ITEM TEXT NOT NULL, PRICE INT NOT NULL);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS ITEMS");
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS SALES");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS PURCHASE");
     }
 
-    public void insertData(String date,String itemName,int price){
+    public void insertData(String tableName,String date,String itemName,int price){
         SQLiteDatabase db=this.getWritableDatabase();
         int unique=1;
         String convertedDate=convertDateFormat(date);
@@ -38,7 +40,7 @@ public class database extends SQLiteOpenHelper {
         contentValues.put("SALESDATE",convertedDate);
         contentValues.put("ITEM",itemName);
         contentValues.put("PRICE",price);
-        db.insert("SALES",null,contentValues);
+        db.insert(tableName,null,contentValues);
         Cursor cursor =db.rawQuery("SELECT EXISTS (SELECT * FROM ITEMS WHERE ITEM='"+itemName+"')",null);
         if (cursor.moveToFirst())
             unique=cursor.getInt(0);
@@ -49,7 +51,7 @@ public class database extends SQLiteOpenHelper {
         }
     }
 
-    public void update(int id, String date, String itemName, int price){
+    public void update(String tableName,int id, String date, String itemName, int price){
         SQLiteDatabase db=this.getWritableDatabase();
         String convertedDate=convertDateFormat(date);
         ContentValues contentValues=new ContentValues();
@@ -58,10 +60,10 @@ public class database extends SQLiteOpenHelper {
         contentValues.put("PRICE",price);
         String whereClause="SALESID=?";
         String whereArgs[]={id+""};
-        db.update("SALES",contentValues,whereClause,whereArgs);
+        db.update(tableName,contentValues,whereClause,whereArgs);
     }
 
-    public ArrayList<dbPojo> getData(){
+    public ArrayList<dbPojo> getData(String tableName){
         ArrayList<dbPojo> arrayList = new ArrayList<>();
         dbPojo pojo;
 
@@ -78,7 +80,7 @@ public class database extends SQLiteOpenHelper {
         String from_date=year+"-"+(month+1)+"-"+day;
 
         SQLiteDatabase db=this.getWritableDatabase();
-        Cursor cursor=db.rawQuery("SELECT * FROM SALES WHERE SALESDATE BETWEEN '"+from_date+"' AND '"+curr_date+"';",null);
+        Cursor cursor=db.rawQuery("SELECT * FROM "+tableName+" WHERE SALESDATE BETWEEN '"+from_date+"' AND '"+curr_date+"' ORDER BY SALESDATE DESC;",null);
         if(cursor.moveToFirst()){
             do{
                 pojo=new dbPojo();
@@ -105,12 +107,12 @@ public class database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public ArrayList<dbPojo> filterResult(String from, String to){
+    public ArrayList<dbPojo> filterResult(String tableName,String from, String to){
         ArrayList<dbPojo> arrayList=new ArrayList<>();
         SQLiteDatabase db=this.getReadableDatabase();
         String convertedFrom=convertDateFormat(from);
         String convertedTo=convertDateFormat(to);
-        Cursor cursor=db.rawQuery("SELECT ITEM, SUM(PRICE) FROM SALES WHERE SALESDATE BETWEEN '"+convertedFrom+"' AND '"+convertedTo+"' GROUP BY ITEM;",null);
+        Cursor cursor=db.rawQuery("SELECT ITEM, SUM(PRICE) FROM "+tableName+" WHERE SALESDATE BETWEEN '"+convertedFrom+"' AND '"+convertedTo+"' GROUP BY ITEM ORDER BY ITEM ASC;",null);
         if(cursor.moveToFirst()){
             do{
                 dbPojo pojo=new dbPojo();
@@ -128,17 +130,17 @@ public class database extends SQLiteOpenHelper {
         return finalDate;
     }
 
-    public void delete(int id){
+    public void delete(String tableName,int id){
         SQLiteDatabase db=this.getWritableDatabase();
-        db.execSQL("DELETE FROM SALES WHERE SALESID="+id+";");
+        db.execSQL("DELETE FROM "+tableName+" WHERE SALESID="+id+";");
     }
 
-    public int getGrandTotal(String from , String to){
+    public int getGrandTotal(String tableName,String from , String to){
         int total=0;
         SQLiteDatabase db=this.getWritableDatabase();
         String convertedFrom=convertDateFormat(from);
         String convertedTo=convertDateFormat(to);
-        Cursor cursor=db.rawQuery("SELECT SUM(PRICE) FROM SALES WHERE SALESDATE BETWEEN '"+convertedFrom+"' AND '"+convertedTo+"';", null);
+        Cursor cursor=db.rawQuery("SELECT SUM(PRICE) FROM "+tableName+" WHERE SALESDATE BETWEEN '"+convertedFrom+"' AND '"+convertedTo+"';", null);
         if(cursor.moveToFirst()){
             total=cursor.getInt(0);
         }

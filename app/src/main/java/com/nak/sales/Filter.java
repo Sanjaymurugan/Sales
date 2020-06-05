@@ -18,11 +18,14 @@ public class Filter extends AppCompatActivity {
     TextView from,to,grandTotal;
     ListView filterList;
     database db;
+    String tableName="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter);
+
+        tableName=getIntent().getExtras().getString("tableName");
 
         fromCV=(CardView)findViewById(R.id.fromCV);
         toCV=(CardView)findViewById(R.id.toCV);
@@ -84,8 +87,8 @@ public class Filter extends AppCompatActivity {
     }
 
     public void trigger(){
-        homeListAdapter adapter=new homeListAdapter(Filter.this,db.filterResult(from.getText().toString(),to.getText().toString()));
+        homeListAdapter adapter=new homeListAdapter(Filter.this,db.filterResult(tableName,from.getText().toString(),to.getText().toString()));
         filterList.setAdapter(adapter);
-        grandTotal.setText("₹"+db.getGrandTotal(from.getText().toString(),to.getText().toString()));
+        grandTotal.setText("₹"+db.getGrandTotal(tableName,from.getText().toString(),to.getText().toString()));
     }
 }
