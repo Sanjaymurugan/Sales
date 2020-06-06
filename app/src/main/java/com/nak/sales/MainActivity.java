@@ -77,9 +77,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         db=new database(MainActivity.this);
-        adapter=new homeListAdapter(MainActivity.this,db.getData(tableSpinner.getSelectedItem().toString()));
+        adapter=new homeListAdapter(MainActivity.this,db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString()));
         homeList.setAdapter(adapter);
-        arrayList=db.getData(tableSpinner.getSelectedItem().toString());
+        arrayList=db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString());
         setDate();
 
         final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems());
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         homeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                arrayList=db.getData(tableSpinner.getSelectedItem().toString());
+                arrayList=db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString());
                 dbPojo pojo=arrayList.get(i);
                 id=pojo.getId();
                 itemName.setText(pojo.getItemName());
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     itemPrice.setText("");
                     setDate();
                     Toast.makeText(MainActivity.this, "Successfully deleted", Toast.LENGTH_SHORT).show();
-                    adapter = new homeListAdapter(MainActivity.this, db.getData(tableSpinner.getSelectedItem().toString()));
+                    adapter = new homeListAdapter(MainActivity.this, db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString()));
                     homeList.setAdapter(adapter);
                     add.setText("Add");
                     filter.setText("View Sales");
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
     public void trigger(){
         setDate();
         Toast.makeText(MainActivity.this, "Successfully added", Toast.LENGTH_SHORT).show();
-        adapter = new homeListAdapter(MainActivity.this, db.getData(tableSpinner.getSelectedItem().toString()));
+        adapter = new homeListAdapter(MainActivity.this, db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString()));
         homeList.setAdapter(adapter);
         cancel.setVisibility(View.GONE);
         add.setText("Add");

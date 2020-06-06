@@ -63,24 +63,12 @@ public class database extends SQLiteOpenHelper {
         db.update(tableName,contentValues,whereClause,whereArgs);
     }
 
-    public ArrayList<dbPojo> getData(String tableName){
+    public ArrayList<dbPojo> getData(String tableName, String date){
         ArrayList<dbPojo> arrayList = new ArrayList<>();
         dbPojo pojo;
 
-        Calendar calendar=Calendar.getInstance();
-        int day=calendar.get(Calendar.DAY_OF_MONTH);
-        int month=calendar.get(Calendar.MONTH);
-        int year=calendar.get(Calendar.YEAR);
-        String curr_date=year+"-"+(month+1)+"-"+day;
-
-        calendar.add(Calendar.MONTH,-1);
-        day=calendar.get(Calendar.DAY_OF_MONTH);
-        month=calendar.get(Calendar.MONTH);
-        year=calendar.get(Calendar.YEAR);
-        String from_date=year+"-"+(month+1)+"-"+day;
-
         SQLiteDatabase db=this.getWritableDatabase();
-        Cursor cursor=db.rawQuery("SELECT * FROM "+tableName+" WHERE SALESDATE BETWEEN '"+from_date+"' AND '"+curr_date+"' ORDER BY SALESDATE DESC;",null);
+        Cursor cursor=db.rawQuery("SELECT * FROM "+tableName+" WHERE SALESDATE='"+date+"';",null);
         if(cursor.moveToFirst()){
             do{
                 pojo=new dbPojo();
