@@ -28,7 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-    TextView date;
+    TextView date,totalOnDate;
     CardView cv;
     DatePickerDialog pickerDialog;
     TextInputEditText itemPrice;
@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         date=(TextView)findViewById(R.id.date);
+        totalOnDate=(TextView)findViewById(R.id.total);
         cv=(CardView)findViewById(R.id.dateCV);
         itemName=(AutoCompleteTextView)findViewById(R.id.itemName);
         itemPrice=(TextInputEditText)findViewById(R.id.price);
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
                         date.setText(i2+"-"+(i1+1)+"-"+i);
+                        trigger();
                     }
                 },day,month+1,year);
                 pickerDialog.show();
@@ -182,8 +184,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void trigger(){
-        setDate();
         Toast.makeText(MainActivity.this, "Successfully added", Toast.LENGTH_SHORT).show();
+        int total=db.getTotalOnDate(tableSpinner.getSelectedItem().toString(),date.getText().toString());
+        totalOnDate.setText("₹"+total);
         adapter = new homeListAdapter(MainActivity.this, db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString()));
         homeList.setAdapter(adapter);
         cancel.setVisibility(View.GONE);

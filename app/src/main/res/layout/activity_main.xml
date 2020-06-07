@@ -124,6 +124,18 @@
         android:id="@+id/salesList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/add"/>
+        android:layout_below="@+id/add"
+        android:layout_above="@+id/total"/>
+
+    <TextView
+        android:id="@+id/total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:textColor="@color/colorAccent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:text="Total"
+        android:layout_margin="10dp"/>
 
 </RelativeLayout>

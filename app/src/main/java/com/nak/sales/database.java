@@ -67,8 +67,9 @@ public class database extends SQLiteOpenHelper {
         ArrayList<dbPojo> arrayList = new ArrayList<>();
         dbPojo pojo;
 
+        String convertedOnDate=convertDateFormat(date);
         SQLiteDatabase db=this.getWritableDatabase();
-        Cursor cursor=db.rawQuery("SELECT * FROM "+tableName+" WHERE SALESDATE='"+date+"';",null);
+        Cursor cursor=db.rawQuery("SELECT * FROM "+tableName+" WHERE SALESDATE='"+convertedOnDate+"';",null);
         if(cursor.moveToFirst()){
             do{
                 pojo=new dbPojo();
@@ -129,6 +130,17 @@ public class database extends SQLiteOpenHelper {
         String convertedFrom=convertDateFormat(from);
         String convertedTo=convertDateFormat(to);
         Cursor cursor=db.rawQuery("SELECT SUM(PRICE) FROM "+tableName+" WHERE SALESDATE BETWEEN '"+convertedFrom+"' AND '"+convertedTo+"';", null);
+        if(cursor.moveToFirst()){
+            total=cursor.getInt(0);
+        }
+        return total;
+    }
+
+    public int getTotalOnDate(String tableName,String date){
+        int total=0;
+        SQLiteDatabase db=this.getWritableDatabase();
+        String convertedDate=convertDateFormat(date);
+        Cursor cursor=db.rawQuery("SELECT SUM(PRICE) FROM "+tableName+" WHERE SALESDATE='"+convertedDate+"';",null);
         if(cursor.moveToFirst()){
             total=cursor.getInt(0);
         }
