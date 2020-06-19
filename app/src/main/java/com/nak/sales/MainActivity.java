@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Declarations
         date=(TextView)findViewById(R.id.date);
         totalOnDate=(TextView)findViewById(R.id.total);
         cv=(CardView)findViewById(R.id.dateCV);
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         tableList=new ArrayList<>();
 
         tableList.add("Sales");
-        tableList.add("Purchase");
+        tableList.add("Purchase"); //Contents for the spinner
         ArrayAdapter<String> tableSpinnerAdapter=new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,tableList);
         tableSpinner.setAdapter(tableSpinnerAdapter);
         tableSpinner.setSelection(0);
@@ -77,13 +78,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        setDate();
         db=new database(MainActivity.this);
         adapter=new homeListAdapter(MainActivity.this,db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString()));
         homeList.setAdapter(adapter);
         arrayList=db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString());
-        setDate();
 
-        final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems());
+        final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems()); //ArrayAdapter for autocomplete(suggestion)
         itemName.setThreshold(1);
         itemName.setAdapter(arrayAdapter);
 
@@ -97,7 +98,19 @@ public class MainActivity extends AppCompatActivity {
                 pickerDialog=new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                        date.setText(i2+"-"+(i1+1)+"-"+i);
+                        String one,two;
+
+                        //For change the date to the format of DD-MM-YYYY
+                        if(i2/10==0)
+                            one="0"+i2;
+                        else
+                            one=i2+"";
+                        i1+=1; //month has to be added one
+                        if(i1/10==0)
+                            two="0"+i1;
+                        else
+                            two=i1+"";
+                        date.setText(one+"-"+two+"-"+i);
                         trigger();
                     }
                 },day,month+1,year);
@@ -109,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!TextUtils.isEmpty(itemName.getText())&&!TextUtils.isEmpty(itemPrice.getText())) {
-                    if(add.getText().equals("Edit"))
+                    if(add.getText().equals("Edit")) //For editing the existing data
                         db.update(tableSpinner.getSelectedItem().toString(),id,date.getText().toString(),itemName.getText().toString(),Integer.parseInt(itemPrice.getText().toString()));
-                    else
+                    else //For adding new data
                         db.insertData(tableSpinner.getSelectedItem().toString(),date.getText().toString(), itemName.getText().toString(), Integer.parseInt(itemPrice.getText().toString()));
                     itemName.setText("");
                     itemPrice.setText("");
@@ -124,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        homeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        homeList.setOnItemClickListener(new AdapterView.OnItemClickListener() { //For enable editing the existing data
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 arrayList=db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString());
@@ -136,18 +149,24 @@ public class MainActivity extends AppCompatActivity {
                 add.setText("Edit");
                 filter.setText("Delete");
                 cancel.setVisibility(View.VISIBLE);
+                int total=db.getTotalOnDate(tableSpinner.getSelectedItem().toString(),date.getText().toString());
+                totalOnDate.setText("₹"+total);
+                adapter = new homeListAdapter(MainActivity.this, db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString()));
+                homeList.setAdapter(adapter);
             }
         });
 
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(filter.getText().equals("View Sales")){
+                /* This button is for viewing sales but the button changes to delete on edit mode */
+                if(filter.getText().equals("View Sales")){ //For viewing sales
                     Intent intent=new Intent(MainActivity.this,Filter.class);
                     intent.putExtra("tableName",tableSpinner.getSelectedItem().toString());
+                    //Sending the name of the table as sales or purchase from the spinner to the next activity(Filter activity)
                     startActivity(intent);
                 }
-                else{
+                else{ //For deleting data
                     db.delete(tableSpinner.getSelectedItem().toString(),id);
                     itemName.setText("");
                     itemPrice.setText("");
@@ -162,10 +181,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        cancel.setOnClickListener(new View.OnClickListener() {
+        cancel.setOnClickListener(new View.OnClickListener() { //For canceling the edit option
             @Override
             public void onClick(View view) {
-                setDate();
+                /* It appears only when the list item is selected */
                 add.setText("Add");
                 filter.setText("View Sales");
                 itemName.setText("");
@@ -175,15 +194,29 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void setDate(){
+    public void setDate(){ //For setting today's date
         Calendar cal=Calendar.getInstance();
         int day=cal.get(Calendar.DAY_OF_MONTH);
         int month=cal.get(Calendar.MONTH);
         int year=cal.get(Calendar.YEAR);
-        date.setText(day+"-"+(month+1)+"-"+year);
+        month+=1;
+
+        //For changing the format of the date to DD-MM-YYYY
+        String one,two;
+        if(day/10==0)
+            one="0"+day;
+        else
+            one=""+day;
+
+        if(month/10==0)
+            two="0"+month;
+        else
+            two=""+month;
+
+        date.setText(one+"-"+two+"-"+year);
     }
 
-    public void trigger(){
+    public void trigger(){ //For updating the list whenever the data is being added or updated
         Toast.makeText(MainActivity.this, "Successfully added", Toast.LENGTH_SHORT).show();
         int total=db.getTotalOnDate(tableSpinner.getSelectedItem().toString(),date.getText().toString());
         totalOnDate.setText("₹"+total);

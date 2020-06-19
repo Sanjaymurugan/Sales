@@ -25,7 +25,7 @@ public class Filter extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter);
 
-        tableName=getIntent().getExtras().getString("tableName");
+        tableName=getIntent().getExtras().getString("tableName"); //Getting the table name from the previous activity
 
         fromCV=(CardView)findViewById(R.id.fromCV);
         toCV=(CardView)findViewById(R.id.toCV);
@@ -39,13 +39,35 @@ public class Filter extends AppCompatActivity {
         int day=cal.get(Calendar.DAY_OF_MONTH);
         int month=cal.get(Calendar.MONTH);
         int year=cal.get(Calendar.YEAR);
-        to.setText(day+"-"+(month+1)+"-"+year);
+        month+=1; //Month has to be added one to get the exact month number
+
+        //Changing the date to the format DD-MM-YYYY
+        String one,two;
+        if(day/10==0)
+            one="0"+day;
+        else
+            one=""+day;
+        if(month/10==0)
+            two="0"+month;
+        else
+            two=""+month;
+        to.setText(one+"-"+two+"-"+year);
 
         cal.add(Calendar.MONTH,-1);
         day=cal.get(Calendar.DAY_OF_MONTH);
         month=cal.get(Calendar.MONTH);
         year=cal.get(Calendar.YEAR);
-        from.setText(day+"-"+(month+1)+"-"+year);
+        month+=1;
+
+        if(day/10==0)
+            one="0"+day;
+        else
+            one=""+day;
+        if(month/10==0)
+            two="0"+month;
+        else
+            two=""+month;
+        from.setText(one+"-"+two+"-"+year);
 
         fromCV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +79,17 @@ public class Filter extends AppCompatActivity {
                 pickerDialog=new DatePickerDialog(Filter.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                        from.setText(i2+"-"+(i1+1)+"-"+i);
+                        String one,two;
+                        i1+=1;
+                        if(i2/10==0)
+                            one="0"+i2;
+                        else
+                            one=i2+"";
+                        if(i1/10==0)
+                            two="0"+i1;
+                        else
+                            two=""+i1;
+                        from.setText(one+"-"+two+"-"+i);
                         trigger();
                     }
                 },day,month+1,year);
@@ -75,7 +107,17 @@ public class Filter extends AppCompatActivity {
                 pickerDialog=new DatePickerDialog(Filter.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                        to.setText(i2+"-"+(i1+1)+"-"+i);
+                        String one,two;
+                        i1+=1;
+                        if(i2/10==0)
+                            one="0"+i2;
+                        else
+                            one=""+i2;
+                        if(i1/10==0)
+                            two="0"+i1;
+                        else
+                            two=""+i1;
+                        to.setText(one+"-"+two+"-"+i);
                         trigger();
                     }
                 },day,month+1,year);
@@ -86,8 +128,8 @@ public class Filter extends AppCompatActivity {
         trigger();
     }
 
-    public void trigger(){
-        homeListAdapter adapter=new homeListAdapter(Filter.this,db.filterResult(tableName,from.getText().toString(),to.getText().toString()));
+    public void trigger(){ //List has to updated whenever the from and to dates are being changed
+        filterListAdapter adapter=new filterListAdapter(Filter.this,db.filterResult(tableName,from.getText().toString(),to.getText().toString()));
         filterList.setAdapter(adapter);
         grandTotal.setText("₹"+db.getGrandTotal(tableName,from.getText().toString(),to.getText().toString()));
     }
