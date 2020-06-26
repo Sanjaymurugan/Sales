@@ -93,6 +93,11 @@ public class Filter extends AppCompatActivity {
                         trigger();
                     }
                 },day,month+1,year);
+                String temp[]=from.getText().toString().split("-");
+                int d=Integer.parseInt(temp[0]);
+                int m=Integer.parseInt(temp[1])-1;
+                int y=Integer.parseInt(temp[2]);
+                pickerDialog.updateDate(y,m,d); //For displaying the selected date in the date picker
                 pickerDialog.show();
             }
         });
@@ -121,6 +126,11 @@ public class Filter extends AppCompatActivity {
                         trigger();
                     }
                 },day,month+1,year);
+                String temp[]=to.getText().toString().split("-");
+                int d=Integer.parseInt(temp[0]);
+                int m=Integer.parseInt(temp[1])-1;
+                int y=Integer.parseInt(temp[2]);
+                pickerDialog.updateDate(y,m,d); //For displaying the selected date in the date picker
                 pickerDialog.show();
             }
         });

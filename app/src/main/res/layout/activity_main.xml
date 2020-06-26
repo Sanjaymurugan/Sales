@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_toLeftOf="@+id/dateCV"
-        android:layout_alignBottom="@+id/dateCV"/>
+        android:layout_alignBottom="@+id/dateCV"
+        android:spinnerMode="dialog"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/dateCV"
