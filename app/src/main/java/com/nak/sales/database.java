@@ -23,6 +23,7 @@ public class database extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS ITEMS (ITEM TEXT UNIQUE NOT NULL);"); //Maintaining the item names
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS SALES (SALESID INTEGER PRIMARY KEY AUTOINCREMENT,SALESDATE DATE NOT NULL, ITEM TEXT NOT NULL, PRICE INT NOT NULL);"); //For maintaining sales data
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS PURCHASE (SALESID INTEGER PRIMARY KEY AUTOINCREMENT,SALESDATE DATE NOT NULL, ITEM TEXT NOT NULL, PRICE INT NOT NULL);"); //For maintaining purchase data
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS EXPENSE (SALESID INTEGER PRIMARY KEY AUTOINCREMENT,SALESDATE DATE NOT NULL, ITEM TEXT NOT NULL, PRICE INT NOT NULL);"); //For maintaining expenses data
     }
 
     @Override
@@ -30,6 +31,7 @@ public class database extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS ITEMS");
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS SALES");
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS PURCHASE");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS EXPENSE");
     }
 
     public void insertData(String tableName,String date,String itemName,int price){ //Inserting a new data

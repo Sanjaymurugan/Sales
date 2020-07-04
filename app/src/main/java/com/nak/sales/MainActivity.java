@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         tableList.add("Sales");
         tableList.add("Purchase"); //Contents for the spinner
+        tableList.add("Expense");
         ArrayAdapter<String> tableSpinnerAdapter=new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,tableList);
         tableSpinner.setAdapter(tableSpinnerAdapter);
         tableSpinner.setSelection(0);
@@ -229,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         homeList.setAdapter(adapter);
         cancel.setVisibility(View.GONE);
         add.setText("Add");
-        filter.setText("View Sales");
+        filter.setText("View "+tableSpinner.getSelectedItem().toString());
         final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems());
         itemName.setThreshold(1);
         itemName.setAdapter(arrayAdapter);
