@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         tableList.add("Sales");
         tableList.add("Purchase"); //Contents for the spinner
         tableList.add("Expense");
-        ArrayAdapter<String> tableSpinnerAdapter=new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,tableList);
+        ArrayAdapter<String> tableSpinnerAdapter=new ArrayAdapter<>(this,R.layout.textview_with_padding,tableList);
+        tableSpinnerAdapter.setDropDownViewResource(R.layout.textview_with_padding);
         tableSpinner.setAdapter(tableSpinnerAdapter);
         tableSpinner.setSelection(0);
         tableSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -132,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
                         db.update(tableSpinner.getSelectedItem().toString(),id,date.getText().toString(),itemName.getText().toString(),Integer.parseInt(itemPrice.getText().toString()));
                     else //For adding new data
                         db.insertData(tableSpinner.getSelectedItem().toString(),date.getText().toString(), itemName.getText().toString(), Integer.parseInt(itemPrice.getText().toString()));
+                    Toast.makeText(MainActivity.this, "Successfully added", Toast.LENGTH_SHORT).show();
                     itemName.setText("");
                     itemPrice.setText("");
                     trigger();
@@ -166,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 /* This button is for viewing sales but the button changes to delete on edit mode */
-                if(filter.getText().equals("View Sales")){ //For viewing sales
+                if(filter.getText().equals("View "+tableSpinner.getSelectedItem().toString())){ //For viewing sales
                     Intent intent=new Intent(MainActivity.this,Filter.class);
                     intent.putExtra("tableName",tableSpinner.getSelectedItem().toString());
                     //Sending the name of the table as sales or purchase from the spinner to the next activity(Filter activity)
@@ -223,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void trigger(){ //For updating the list whenever the data is being added or updated
-        Toast.makeText(MainActivity.this, "Successfully added", Toast.LENGTH_SHORT).show();
         int total=db.getTotalOnDate(tableSpinner.getSelectedItem().toString(),date.getText().toString());
         totalOnDate.setText("₹"+total);
         adapter = new homeListAdapter(MainActivity.this, db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString()));
