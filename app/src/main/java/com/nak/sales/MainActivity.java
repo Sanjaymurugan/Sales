@@ -5,7 +5,9 @@ import androidx.cardview.widget.CardView;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -64,12 +66,20 @@ public class MainActivity extends AppCompatActivity {
         noSales=(TextView)findViewById(R.id.noSales);
         tableList=new ArrayList<>();
 
-        new FancyShowCaseView.Builder(this)
-                .focusOn(tableSpinner)
-                .backgroundColor(R.color.colorPrimary)
-                .title("Select the Category")
-                .build()
-                .show();
+        SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
+        if(!preferences.getBoolean("firstTime",false)){
+
+            new FancyShowCaseView.Builder(this)
+                    .focusOn(tableSpinner)
+                    .backgroundColor(R.color.colorPrimary)
+                    .title("Select the Category")
+                    .build()
+                    .show();
+
+            SharedPreferences.Editor editor=preferences.edit();
+            editor.putBoolean("firstTime",true);
+            editor.commit();
+        }
 
         tableList.add("Sales");
         tableList.add("Purchase"); //Contents for the spinner
