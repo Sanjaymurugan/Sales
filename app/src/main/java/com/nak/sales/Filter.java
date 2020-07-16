@@ -10,12 +10,13 @@ import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class Filter extends AppCompatActivity {
     CardView fromCV, toCV;
     DatePickerDialog pickerDialog;
-    TextView from,to,grandTotal;
+    TextView from,to,grandTotal,nofilter;
     ListView filterList;
     database db;
     String tableName="";
@@ -33,6 +34,7 @@ public class Filter extends AppCompatActivity {
         to=(TextView)findViewById(R.id.to);
         grandTotal=(TextView)findViewById(R.id.total);
         filterList=(ListView)findViewById(R.id.filterList);
+        nofilter=(TextView)findViewById(R.id.noFilter);
         db=new database(Filter.this);
 
         Calendar cal=Calendar.getInstance();
@@ -139,8 +141,15 @@ public class Filter extends AppCompatActivity {
     }
 
     public void trigger(){ //List has to updated whenever the from and to dates are being changed
-        filterListAdapter adapter=new filterListAdapter(Filter.this,db.filterResult(tableName,from.getText().toString(),to.getText().toString()));
+        ArrayList<dbPojo> arrayList=new ArrayList<>();
+        arrayList=db.filterResult(tableName,from.getText().toString(),to.getText().toString());
+        filterListAdapter adapter=new filterListAdapter(Filter.this,arrayList);
         filterList.setAdapter(adapter);
         grandTotal.setText("₹"+db.getGrandTotal(tableName,from.getText().toString(),to.getText().toString()));
+        if(arrayList.size()==0) {
+            nofilter.setVisibility(View.VISIBLE);
+            nofilter.setText("No "+tableName+" between "+from.getText().toString()+" and "+to.getText().toString());
+        } else
+            nofilter.setVisibility(View.GONE);
     }
 }

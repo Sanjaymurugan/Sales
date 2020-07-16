@@ -27,8 +27,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import me.toptas.fancyshowcase.FancyShowCaseView;
+
 public class MainActivity extends AppCompatActivity {
-    TextView date,totalOnDate;
+    TextView date,totalOnDate,noSales;
     CardView cv;
     DatePickerDialog pickerDialog;
     TextInputEditText itemPrice;
@@ -59,7 +61,15 @@ public class MainActivity extends AppCompatActivity {
         cancel=(Button)findViewById(R.id.cancel);
         cancel.setVisibility(View.GONE);
         homeList=(ListView)findViewById(R.id.salesList);
+        noSales=(TextView)findViewById(R.id.noSales);
         tableList=new ArrayList<>();
+
+        new FancyShowCaseView.Builder(this)
+                .focusOn(tableSpinner)
+                .backgroundColor(R.color.colorPrimary)
+                .title("Select the Category")
+                .build()
+                .show();
 
         tableList.add("Sales");
         tableList.add("Purchase"); //Contents for the spinner
@@ -85,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
         adapter=new homeListAdapter(MainActivity.this,db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString()));
         homeList.setAdapter(adapter);
         arrayList=db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString());
+        if(arrayList.size()==0) {
+            noSales.setVisibility(View.VISIBLE);
+            noSales.setText("No " + tableSpinner.getSelectedItem() + " on " + date.getText().toString());
+        } else
+            noSales.setVisibility(View.GONE);
 
         final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems()); //ArrayAdapter for autocomplete(suggestion)
         itemName.setThreshold(1);
@@ -227,7 +242,8 @@ public class MainActivity extends AppCompatActivity {
     public void trigger(){ //For updating the list whenever the data is being added or updated
         int total=db.getTotalOnDate(tableSpinner.getSelectedItem().toString(),date.getText().toString());
         totalOnDate.setText("₹"+total);
-        adapter = new homeListAdapter(MainActivity.this, db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString()));
+        arrayList= db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString());
+        adapter = new homeListAdapter(MainActivity.this,arrayList);
         homeList.setAdapter(adapter);
         cancel.setVisibility(View.GONE);
         add.setText("Add");
@@ -235,5 +251,9 @@ public class MainActivity extends AppCompatActivity {
         final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems());
         itemName.setThreshold(1);
         itemName.setAdapter(arrayAdapter);
+        if(arrayList.size()==0)
+            noSales.setText("No "+tableSpinner.getSelectedItem()+" on "+date.getText().toString());
+        else
+            noSales.setVisibility(View.GONE);
     }
 }

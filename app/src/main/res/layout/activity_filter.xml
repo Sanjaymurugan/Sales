@@ -97,6 +97,17 @@
         android:layout_above="@+id/total"/>
 
     <TextView
+        android:id="@+id/noFilter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toCV"
+        android:text="Hello"
+        android:gravity="center"
+        android:textSize="80dp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"/>
+
+    <TextView
         android:id="@+id/total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
