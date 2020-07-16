@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         arrayList=db.getData(tableSpinner.getSelectedItem().toString(),date.getText().toString());
         if(arrayList.size()==0) {
             noSales.setVisibility(View.VISIBLE);
-            noSales.setText("No " + tableSpinner.getSelectedItem() + " on " + date.getText().toString());
+            noSales.setText("NO " + tableSpinner.getSelectedItem().toString().toUpperCase() + " ON " + date.getText().toString());
         } else
             noSales.setVisibility(View.GONE);
 
@@ -251,9 +251,10 @@ public class MainActivity extends AppCompatActivity {
         final ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,db.getItems());
         itemName.setThreshold(1);
         itemName.setAdapter(arrayAdapter);
-        if(arrayList.size()==0)
-            noSales.setText("No "+tableSpinner.getSelectedItem()+" on "+date.getText().toString());
-        else
+        if(arrayList.size()==0) {
+            noSales.setVisibility(View.VISIBLE);
+            noSales.setText("NO " + tableSpinner.getSelectedItem().toString().toUpperCase() + " ON " + date.getText().toString());
+        } else
             noSales.setVisibility(View.GONE);
     }
 }

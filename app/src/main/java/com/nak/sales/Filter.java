@@ -148,7 +148,7 @@ public class Filter extends AppCompatActivity {
         grandTotal.setText("₹"+db.getGrandTotal(tableName,from.getText().toString(),to.getText().toString()));
         if(arrayList.size()==0) {
             nofilter.setVisibility(View.VISIBLE);
-            nofilter.setText("No "+tableName+" between "+from.getText().toString()+" and "+to.getText().toString());
+            nofilter.setText("NO "+tableName.toUpperCase()+" BETWEEN "+from.getText().toString()+" AND "+to.getText().toString());
         } else
             nofilter.setVisibility(View.GONE);
     }

@@ -103,7 +103,8 @@
         android:layout_below="@+id/toCV"
         android:text="Hello"
         android:gravity="center"
-        android:textSize="80dp"
+        android:textSize="50dp"
+        android:fontFamily="sans-serif-condensed"
         android:textStyle="bold"
         android:textColor="@color/colorPrimary"/>
 
