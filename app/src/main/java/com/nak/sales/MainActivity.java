@@ -31,6 +31,11 @@ import java.util.Date;
 
 import me.toptas.fancyshowcase.FancyShowCaseView;
 
+import static android.view.Gravity.BOTTOM;
+import static android.view.Gravity.CENTER;
+import static android.view.Gravity.LEFT;
+import static android.view.Gravity.RIGHT;
+
 public class MainActivity extends AppCompatActivity {
     TextView date,totalOnDate,noSales;
     CardView cv;
@@ -66,20 +71,45 @@ public class MainActivity extends AppCompatActivity {
         noSales=(TextView)findViewById(R.id.noSales);
         tableList=new ArrayList<>();
 
-        SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
-        if(!preferences.getBoolean("firstTime",false)){
+//        SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
+//        if(!preferences.getBoolean("firstTime",false)){
 
             new FancyShowCaseView.Builder(this)
                     .focusOn(tableSpinner)
                     .backgroundColor(R.color.colorPrimary)
                     .title("Select the Category")
+                    .titleGravity(RIGHT)
                     .build()
                     .show();
 
-            SharedPreferences.Editor editor=preferences.edit();
-            editor.putBoolean("firstTime",true);
-            editor.commit();
-        }
+            new FancyShowCaseView.Builder(this)
+                    .focusOn(date)
+                    .backgroundColor(R.color.colorPrimary)
+                    .title("Select required date")
+                    .titleGravity(LEFT)
+                    .build()
+                    .show();
+
+            new FancyShowCaseView.Builder(this)
+                    .focusOn(itemName)
+                    .backgroundColor(R.color.colorPrimary)
+                    .title("Enter the Item name")
+                    .titleGravity(RIGHT)
+                    .build()
+                    .show();
+
+            new FancyShowCaseView.Builder(this)
+                    .focusOn(itemPrice)
+                    .backgroundColor(R.color.colorPrimary)
+                    .title("Enter the price of the item")
+                    .titleGravity(LEFT)
+                    .build()
+                    .show();
+
+//            SharedPreferences.Editor editor=preferences.edit();
+//            editor.putBoolean("firstTime",true);
+//            editor.commit();
+//        }
 
         tableList.add("Sales");
         tableList.add("Purchase"); //Contents for the spinner
