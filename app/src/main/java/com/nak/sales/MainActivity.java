@@ -29,7 +29,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import me.toptas.fancyshowcase.FancyShowCaseQueue;
 import me.toptas.fancyshowcase.FancyShowCaseView;
+import me.toptas.fancyshowcase.listener.DismissListener;
 
 import static android.view.Gravity.BOTTOM;
 import static android.view.Gravity.CENTER;
@@ -71,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
         noSales=(TextView)findViewById(R.id.noSales);
         tableList=new ArrayList<>();
 
-//        SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
-//        if(!preferences.getBoolean("firstTime",false)){
+        SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
+        if(!preferences.getBoolean("firstTime",false)){
 
             new FancyShowCaseView.Builder(this)
                     .focusOn(tableSpinner)
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
                     .backgroundColor(R.color.colorPrimary)
                     .title("Select required date")
                     .titleGravity(LEFT)
+                    .delay(3000)
                     .build()
                     .show();
 
@@ -95,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                     .backgroundColor(R.color.colorPrimary)
                     .title("Enter the Item name")
                     .titleGravity(RIGHT)
+                    .delay(6000)
                     .build()
                     .show();
 
@@ -103,13 +107,14 @@ public class MainActivity extends AppCompatActivity {
                     .backgroundColor(R.color.colorPrimary)
                     .title("Enter the price of the item")
                     .titleGravity(LEFT)
+                    .delay(9000)
                     .build()
                     .show();
 
-//            SharedPreferences.Editor editor=preferences.edit();
-//            editor.putBoolean("firstTime",true);
-//            editor.commit();
-//        }
+            SharedPreferences.Editor editor=preferences.edit();
+            editor.putBoolean("firstTime",true);
+            editor.commit();
+        }
 
         tableList.add("Sales");
         tableList.add("Purchase"); //Contents for the spinner
