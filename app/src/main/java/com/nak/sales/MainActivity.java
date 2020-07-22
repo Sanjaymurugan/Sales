@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         noSales=(TextView)findViewById(R.id.noSales);
         tableList=new ArrayList<>();
 
+        setTitle("Expense Monitor");
+
         SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
         if(!preferences.getBoolean("firstTime",false)){
 
@@ -116,9 +118,9 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }
 
-        tableList.add("Sales");
-        tableList.add("Purchase"); //Contents for the spinner
         tableList.add("Expense");
+        tableList.add("Purchase"); //Contents for the spinner
+        tableList.add("Sales");
         ArrayAdapter<String> tableSpinnerAdapter=new ArrayAdapter<>(this,R.layout.textview_with_padding,tableList);
         tableSpinnerAdapter.setDropDownViewResource(R.layout.textview_with_padding);
         tableSpinner.setAdapter(tableSpinnerAdapter);

@@ -27,6 +27,7 @@ public class Filter extends AppCompatActivity {
         setContentView(R.layout.activity_filter);
 
         tableName=getIntent().getExtras().getString("tableName"); //Getting the table name from the previous activity
+        setTitle("Expense Monitor");
 
         fromCV=(CardView)findViewById(R.id.fromCV);
         toCV=(CardView)findViewById(R.id.toCV);
