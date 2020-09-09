@@ -148,4 +148,24 @@ public class database extends SQLiteOpenHelper {
         }
         return total;
     }
+
+    public void editItemName(String realName,String editName){
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues contentValues=new ContentValues();
+        contentValues.put("ITEM",editName);
+        String whereclause="ITEM=?";
+        String whereArgs[]={realName};
+        db.update("ITEMS",contentValues,whereclause,whereArgs);
+        db.update("SALES",contentValues,whereclause,whereArgs);
+        db.update("PURCHASE",contentValues,whereclause,whereArgs);
+        db.update("EXPENSE",contentValues,whereclause,whereArgs);
+    }
+
+    public void deleteItemName(String item){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.execSQL("DELETE FROM ITEMS WHERE ITEM='"+item+"';");
+        db.execSQL("DELETE FROM SALES WHERE ITEM='"+item+"';");
+        db.execSQL("DELETE FROM PURCHASE WHERE ITEM='"+item+"';");
+        db.execSQL("DELETE FROM EXPENSE WHERE ITEM='"+item+"';");
+    }
 }

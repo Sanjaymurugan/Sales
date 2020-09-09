@@ -21,7 +21,9 @@ public class editItemsActivity extends AppCompatActivity {
     Button edit;
     Button delete;
     database db;
-    ArrayList<String> items=new ArrayList<>();
+    public static ArrayList<String> items=new ArrayList<>();
+    public static String tempName;
+    public static ArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class editItemsActivity extends AppCompatActivity {
 
         db=new database(editItemsActivity.this);
         items=db.getItems();
-        final ArrayAdapter adapter=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,items);
+        adapter=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,items);
         itemsList.setAdapter(adapter);
 
         itemName.addTextChangedListener(new TextWatcher() {
@@ -59,8 +61,38 @@ public class editItemsActivity extends AppCompatActivity {
         itemsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(editItemsActivity.this,items.get(i),Toast.LENGTH_SHORT).show();
+                itemName.setText(adapter.getItem(i).toString());
+                tempName=adapter.getItem(i).toString();
             }
         });
+
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.editItemName(tempName,itemName.getText().toString());
+                tempName="";
+                itemName.setText("");
+                Toast.makeText(editItemsActivity.this,"Successfully Editted!",Toast.LENGTH_SHORT).show();
+                trigger();
+            }
+        });
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.deleteItemName(tempName);
+                tempName="";
+                itemName.setText("");
+                Toast.makeText(editItemsActivity.this,"Successfully deleted!",Toast.LENGTH_SHORT).show();
+                trigger();
+            }
+        });
+    }
+
+    void trigger(){
+        items.clear();
+        items=db.getItems();
+        adapter=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,items);
+        itemsList.setAdapter(adapter);
     }
 }
