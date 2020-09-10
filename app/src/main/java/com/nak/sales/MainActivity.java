@@ -58,6 +58,12 @@ public class MainActivity extends AppCompatActivity {
     public static int id=0;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        trigger();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.main_menu,menu);
